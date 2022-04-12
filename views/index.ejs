@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Assignment 5</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
+</head>
+
+<body>
+  <section style="background-color: #eee;">
+    <div class="container py-5 h-100">
+      <div class="row h-100">
+        <div class="col-12">
+          <div class="card rounded-3">
+            <div class="card-body p-4">
+              <h4 class="text-center my-3 pb-3">To Do App</h4>
+              <form id="saveTask" method="post" action="/task">
+                <div class="col-12 form-group mb-1">
+                  <div class="form-outline">
+                    <label class="form-label" for="form1">Enter a task here</label>
+                    <input type="text" id="taskInput" class="form-control" name='Description' />
+                  </div>
+                  <button type="submit" class="btn btn-primary mt-2">Save</button>
+                </div>
+              </form>
+
+              <table class="table table-bordered mb-4 mt-2">
+                <thead>
+                  <tr>
+                    <th scope="col">No.</th>
+                    <th scope="col">Todo item</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% tasks.forEach(task=> { %>
+                    <tr>
+                      <th class="id" scope="row">
+                        <%= task._id %>
+                          </th>
+                      <td>
+                        <%= task.Description %>
+                      </td>
+                      <td>
+                        <%= getStatus(task) %>
+                      </td>
+                      <td>
+                        <form id="deleteForm" style="display: inline-block" onsubmit="deleteTask(`<%= task._id %>`)">
+                        <button id="Delete" type="submit" onclick="location.reload();"
+                          class="btn btn-danger delete-button">Delete</button>
+                        </form>
+                        <form id="completeForm" style="display: inline-block" onsubmit="toggleComplete(`<%= task._id %>`)">
+                          <button type="submit" class="btn btn-success">
+                            <%= task.isComplete ? 'InComplete' : 'Complete' %>
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="index.js"></script>
+  <script>
+    const saveTask = document.getElementById("saveTask");
+    const taskInput = document.getElementById("taskInput");
+    const completeForm = document.getElementById("completeForm");
+    const deleteForm = document.getElementById("deleteForm");
+    addTaskForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      return axios({
+        method: "post",
+        url: "/task",
+        data: {
+          description: taskInput.value
+        },
+      }).then(() => addTaskForm.submit());
+    });
+    async function deleteTask(taskId) {
+      event.preventDefault();
+      return axios.delete(`task/${taskId}`).then(() => deleteForm.submit());
+    }
+    async function toggleComplete(taskId) {
+      event.preventDefault();
+      return axios.put(`task/toggle/${taskId}`).then(() => completeForm.submit());
+    }
+  </script>
+</body>
+
+</html>
